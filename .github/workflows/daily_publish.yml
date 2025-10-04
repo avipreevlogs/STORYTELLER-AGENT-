@@ -1,0 +1,23 @@
+name: Daily Publish
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with: { python-version: '3.11' }
+      - run: python -m pip install -r requirements.txt
+      - run: python generate_story.py
+      - run: python tts.py
+      - run: python assemble_video.py
+      - run: python thumbnail.py
+      - run: python upload_youtube.py
+        env:
+          ELEVEN_API_KEY: ${{ secrets.ELEVEN_API_KEY }}
+
+
